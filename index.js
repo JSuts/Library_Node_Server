@@ -31,7 +31,7 @@ var con = mysql.createConnection({
 //   console.log("Connected!");
 // });
 
-app.get('/start' (req, res) => {
+app.get('/start', (req, res) => {
   res.send("Hello");
 });
 
