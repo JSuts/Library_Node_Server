@@ -23,12 +23,16 @@ var con = mysql.createConnection({
 // port: "3306",
 // socketPath: "/var/run/mysqld/mysqld.sock",
 
-con.connect(function(err) {
-  if (err) {
-    console.log("Couldn't connect to databse... Error: ");
-    throw err
-  }
-  console.log("Connected!");
+// con.connect(function(err) {
+//   if (err) {
+//     console.log("Couldn't connect to databse... Error: ");
+//     throw err
+//   }
+//   console.log("Connected!");
+// });
+
+app.get('/start' (req, res) => {
+  res.send("Hello");
 });
 
 app.get('/getBooks', (req, res) => {
