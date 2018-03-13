@@ -16,11 +16,12 @@ const mysql = require('mysql');
 
 var con = mysql.createConnection({
   host: "localhost",
-  socketPath: "/var/run/mysqld/mysqld.sock",
   user: "mobileUser",
   password: process.env.mysqlPW,
   database: "libraryManager"
 });
+// socketPath: "/var/run/mysqld/mysqld.sock",
+// localAddress: "138.68.16.176",
 
 con.connect(function(err) {
   if (err) {
