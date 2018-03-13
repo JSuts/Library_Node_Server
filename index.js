@@ -46,7 +46,8 @@ app.get('/api/getBooks', (req, res) => {
 });
 
 app.get('/api/getUser/:userId', (req, res) => {
-  var sql = "SELECT memberLName, password FROM 'members' WHERE memberID=1"
+  var userId = req.params.userId;
+  var sql = "SELECT memberLName, password FROM 'members' WHERE memberID = " + userId
   con.query(sql, (err, result, fields) => {
     if (err) throw err;
     res.send(result);
