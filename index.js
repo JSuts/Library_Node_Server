@@ -15,23 +15,23 @@ const mysql = require('mysql');
 
 
 var con = mysql.createConnection({
-  host: "10.138.20.168",
+  host: "localhost",
   user: "mobileUser",
-  password: "MobileApp",
+  password: process.env.mysqlPW,
   database: "libraryManager"
 });
 // port: "3306",
 // socketPath: "/var/run/mysqld/mysqld.sock",
 
-// con.connect(function(err) {
-//   if (err) {
-//     console.log("Couldn't connect to databse... Error: ");
-//     throw err
-//   }
-//   console.log("Connected!");
-// });
+con.connect(function(err) {
+  if (err) {
+    console.log("Couldn't connect to databse... Error: ");
+    throw err
+  }
+  console.log("Connected!");
+});
 
-app.get('/start', (req, res) => {
+app.get('/api/start', (req, res) => {
   console.log("Request called");
   res.send("Hello");
 });
@@ -49,6 +49,6 @@ app.get('/getBooks', (req, res) => {
 //   var sql = "SELECT * FROM "
 // })
 
-app.listen(PORT, "138.68.16.176", ()=> {
+app.listen(PORT, ()=> {
   console.log('Server listening on port:' + PORT);
 })
