@@ -36,7 +36,7 @@ app.get('/api/start', (req, res) => {
   res.send("Hello");
 });
 
-app.get('/getBooks', (req, res) => {
+app.get('/api/getBooks', (req, res) => {
   var sql = "SELECT * FROM `books` ORDER BY bookTitle"
   con.query(sql, (err, result, fields) => {
     if (err) throw err;
