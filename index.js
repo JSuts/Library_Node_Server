@@ -45,9 +45,13 @@ app.get('/api/getBooks', (req, res) => {
   });
 });
 
-// app.get('/getUser/:userName', (req, res) => {
-//   var sql = "SELECT * FROM "
-// })
+app.get('/api/getUser/:userId', (req, res) => {
+  var sql = "SELECT memberLName, password FROM 'members' WHERE memberID=1"
+  con.query(sql, (err, result, fields) => {
+    if (err) throw err;
+    res.send(result);
+  })
+})
 
 app.listen(PORT, ()=> {
   console.log('Server listening on port:' + PORT);
