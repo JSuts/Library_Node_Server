@@ -15,13 +15,13 @@ const mysql = require('mysql');
 
 
 var con = mysql.createConnection({
-  host: "localhost",
+  socketPath: "/var/run/mysqld/mysqld.sock",
   user: "mobileUser",
   password: process.env.mysqlPW,
   database: "libraryManager"
 });
+// host: "localhost",
 // port: "3306",
-// socketPath: "/var/run/mysqld/mysqld.sock",
 
 con.connect(function(err) {
   if (err) {
