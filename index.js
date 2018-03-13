@@ -47,7 +47,7 @@ app.get('/api/getBooks', (req, res) => {
 
 app.get('/api/getUser/:userId', (req, res) => {
   var userId = req.params.userId;
-  var sql = "SELECT memberLName, password FROM 'members' WHERE 'memberID' = " + userId
+  var sql = "SELECT * FROM members WHERE memberID = 1"
   con.query(sql, (err, result, fields) => {
     if (err) {
       console.log("ERROR IN THE SQL QUERY");
