@@ -62,10 +62,8 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
   let rentalDate = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
   let dueDate = new Date(Date.now() + 12096e5);
   dueDate = dueDate.getFullYear() + "-" + (dueDate.getMonth() + 1) + "-" + dueDate.getDate();
-  console.log(dueDate);
 
   let sql = "INSERT INTO rentals (memberID, bookID, rentalDate, dueDate, returned) VALUES ('" + userId + "', '" + bookId + "', '" + rentalDate + "', '" + dueDate + "', 'F')"
-  console.log(sql);
   con.query(sql, (err, result) => {
     if (err) {
       console.log("Error Inserting new rental");
@@ -79,6 +77,25 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
       }
       res.send(result)
     })
+  })
+})
+
+app.get('/api/reserveBook/:userId/:bookId', (req, res) => {
+  let userId = req.params.userId;
+  let bookId = req.params.bookId;
+  let todayDate = new Date();
+  let rentalDate = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
+  let dueDate = new Date(Date.now() + 12096e5);
+  dueDate = dueDate.getFullYear() + "-" + (dueDate.getMonth() + 1) + "-" + dueDate.getDate();
+
+  let sql = "INSERT INTO reservations (memberID, bookID, active) VALUES ('" + userId + "', '" + bookId + "', 'T')"
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log("Error Inserting new rental");
+      throw err;
+    }
+    res.send(result)
+
   })
 })
 
