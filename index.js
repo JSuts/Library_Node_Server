@@ -66,25 +66,20 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
 
   let sql = "INSERT INTO rentals (memberID, bookID, rentalDate, dueDate, returned) VALUES ('" + userId + "', '" + bookId + "', '" + rentalDate + "', '" + dueDate + "', 'F')"
   console.log(sql);
-  // con.query(sql, (err, result) => {
-  //   if (err) {
-  //     console.log("Error Inserting new rental");
-  //     throw err;
-  //   }
-  //   let sql2 = "UPDATE books SET available = 'F' WHERE bookID = " + bookId
-  //   con.query(sql2, (err, result) => {
-  //     if (err) {
-  //       console.log("Error Updating Book");
-  //       throw err;
-  //     }
-  //
-  //     ***********
-  //     res.send()
-  //     ***********
-  //
-  //
-  //   })
-  // })
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log("Error Inserting new rental");
+      throw err;
+    }
+    let sql2 = "UPDATE books SET available = 'F' WHERE bookID = " + bookId
+    con.query(sql2, (err, result) => {
+      if (err) {
+        console.log("Error Updating Book");
+        throw err;
+      }
+      res.send(result.affectedRows)
+    })
+  })
 })
 
 app.listen(PORT, ()=> {
