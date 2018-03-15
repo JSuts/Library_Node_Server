@@ -45,20 +45,22 @@ app.get('/api/getBooks', (req, res) => {
 });
 
 app.get('/api/getBooks/:bookNumbers', (req, res) => {
-  let books = ["asd", "asdce", "icea"]
   let bookNumbers = req.params.bookNumbers;
   bookNumbers = bookNumbers.split("_");
-  books = bookNumbers.map((bookNumber) => {
-    let sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = '" + bookNumber + "' ORDER BY bookTitle"
-    con.query(sql, (err, result, fields) => {
-      if (err) throw err;
-      // result = JSON.stringify(result);
-      console.log(result.toString());
-      return result.toString();
-    });
+  let sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = '"
+  bookNumbers.forEach((bookNumber, i) => {
+    if (i == bookNumbers.length - 1) {
+      sql += bookNumber + "' ORDER BY bookTitle"
+      con.query(sql, (err, result, fields) => {
+        if (err) throw err;
+        // result = JSON.stringify(result);
+        console.log(result);
+        res.send(result)
+      });
+    } else {
+     sql += bookNumber + "' OR bookID = '"
+   }
   })
-  console.log(books);
-  res.send(books)
 });
 
 app.get('/api/getUser/:userId', (req, res) => {
