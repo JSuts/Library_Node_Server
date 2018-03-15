@@ -112,8 +112,12 @@ app.get('/api/userInformation/:userId', (req, res) => {
     userInfo.name = result[0].memberFName
     sql = "SELECT bookID, dueDate FROM rentals WHERE memberID = " + userId + " AND returned = 'F'"
     con.query(sql, (err, result, fields) => {
-      res.send(result)
-      // res.send(userInfo)
+      userInfo.books = result;
+      sql = "SELECT bookID FROM reservations WHERE memberID = " + userId + " AND active = 'T'"
+      con.query(sql, (err, result, fields) => {
+        userInfo.reservations = result;
+        res.send(userInfo);
+      })
     })
 
     // userInfo.name = result
