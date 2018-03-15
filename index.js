@@ -47,15 +47,14 @@ app.get('/api/getBooks', (req, res) => {
 app.get('/api/getBooks/:bookNumbers', (req, res) => {
   let bookNumbers = req.params.bookNumbers;
   bookNumbers = bookNumbers.split("_");
-  let books = bookNumbers.map((bookNumber) => {
+  res.send(bookNumbers.map((bookNumber) => {
     var sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = '" + bookNumber + "' ORDER BY bookTitle"
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
       console.log(result);
       return result;
     });
-  });
-  res.send(books);
+  }))
 });
 
 app.get('/api/getUser/:userId', (req, res) => {
