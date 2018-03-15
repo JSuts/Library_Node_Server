@@ -44,6 +44,21 @@ app.get('/api/getBooks', (req, res) => {
   });
 });
 
+app.get('/api/getBooks/:bookNumbers', (req, res) => {
+  let books = [];
+  let bookNumbers = req.params.bookNumbers;
+  bookNumbers = bookNumbers.split("_");
+  bookNumbers.forEach((bookNumber) => {
+    console.log(bookNumber);
+    var sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = " + bookNumber + " ORDER BY bookTitle"
+    con.query(sql, (err, result, fields) => {
+      if (err) throw err;
+      books.append(result);
+    });
+  });
+  res.send(books);
+});
+
 app.get('/api/getUser/:userId', (req, res) => {
   let userId = req.params.userId;
   let sql = "SELECT memberLName, password FROM members WHERE memberID = " + userId
