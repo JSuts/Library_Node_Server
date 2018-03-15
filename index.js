@@ -99,6 +99,23 @@ app.get('/api/reserveBook/:userId/:bookId', (req, res) => {
   })
 })
 
+app.get('/api/userInformation/:userId', (req, res) => {
+  let userId = req.params.userId;
+  let userInfo = {}
+
+  let sql = "SELECT memberFName FROM members WHERE memberID = " + userId
+  con.query(sql, (err, result, fields) => {
+    if (err) {
+      console.log("Error getting user's name");
+      throw err;
+    }
+    result = JSON.parse(result);
+    console.log(result);
+    // userInfo.name = result
+
+  })
+})
+
 app.listen(PORT, ()=> {
   console.log('Server listening on port:' + PORT);
 })
