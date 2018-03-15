@@ -45,15 +45,14 @@ app.get('/api/getBooks', (req, res) => {
 });
 
 app.get('/api/getBooks/:bookNumbers', (req, res) => {
-  let books = [];
   let bookNumbers = req.params.bookNumbers;
   bookNumbers = bookNumbers.split("_");
-  bookNumbers.forEach((bookNumber) => {
+  let books = bookNumbers.map((bookNumber) => {
     console.log(bookNumber);
     var sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = " + bookNumber + " ORDER BY bookTitle"
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
-      books.push(result);
+      return result
     });
   });
   res.send(books);
