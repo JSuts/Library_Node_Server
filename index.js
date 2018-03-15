@@ -53,7 +53,7 @@ app.get('/api/getBooks/:bookNumbers', (req, res) => {
       if (err) throw err;
       result = result.toString()
       console.log(result);
-      return result;
+      return "result";
     });
   }))
 });
