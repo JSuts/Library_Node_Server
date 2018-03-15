@@ -48,7 +48,7 @@ app.get('/api/getBooks/:bookNumbers', (req, res) => {
   let books = ["asd", "asdce", "icea"]
   let bookNumbers = req.params.bookNumbers;
   bookNumbers = bookNumbers.split("_");
-  let books = bookNumbers.map((bookNumber) => {
+  books = bookNumbers.map((bookNumber) => {
     let sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = '" + bookNumber + "' ORDER BY bookTitle"
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
