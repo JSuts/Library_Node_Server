@@ -52,8 +52,8 @@ app.get('/api/getBooks/:bookNumbers', (req, res) => {
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
       result = JSON.stringify(result);
-      console.log(result);
-      return result;
+      console.log(result.toString());
+      return result.toString();
     });
   })
   console.log(books);
