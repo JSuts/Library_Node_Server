@@ -52,7 +52,7 @@ app.get('/api/getBooks/:bookNumbers', (req, res) => {
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
       console.log(result);
-      return result;
+      return result.bookTitle;
     });
   }))
 });
