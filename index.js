@@ -109,7 +109,8 @@ app.get('/api/userInformation/:userId', (req, res) => {
       console.log("Error getting user's name");
       throw err;
     }
-    res.send(result)
+    data = JSON.parse(result)
+    res.send(data)
 
     // userInfo.name = result
 
