@@ -60,7 +60,7 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
   let bookId = req.params.bookId;
   let todayDate = new Date();
   let rentalDate = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
-  let dueDate = new Date(todayDate + 12096e5);
+  let dueDate = new Date(todayDate.now() + 12096e5);
   dueDate = dueDate.getFullYear() + "-" + (dueDate.getMonth() + 1) + "-" + dueDate.getDate();
   console.log(dueDate);
 
