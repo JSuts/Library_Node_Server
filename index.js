@@ -45,6 +45,7 @@ app.get('/api/getBooks', (req, res) => {
 });
 
 app.get('/api/getBooks/:bookNumbers', (req, res) => {
+  let books = ["asd", "asdce", "icea"]
   let bookNumbers = req.params.bookNumbers;
   bookNumbers = bookNumbers.split("_");
   let books = bookNumbers.map((bookNumber) => {
