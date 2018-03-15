@@ -40,21 +40,50 @@ app.get('/api/getBooks', (req, res) => {
   var sql = "SELECT * FROM `books` ORDER BY bookTitle"
   con.query(sql, (err, result, fields) => {
     if (err) throw err;
-    console.log("A Response was sent.");
     res.send(result)
   });
 });
 
 app.get('/api/getUser/:userId', (req, res) => {
-  var userId = req.params.userId;
-  var sql = "SELECT memberLName, password FROM members WHERE memberID = " + userId
+  let userId = req.params.userId;
+  let sql = "SELECT memberLName, password FROM members WHERE memberID = " + userId
   con.query(sql, (err, result, fields) => {
     if (err) {
-      console.log("ERROR IN THE SQL QUERY");
       throw err;
     }
     res.send(result);
   })
+})
+
+app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
+  let userId = req.params.userId;
+  let bookId = req.params.bookId;
+  let todayDate = new Date();
+  let rentalDate = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
+  let dueDate = new Date(todayDate + 12096e5);
+  console.log(dueDate);
+
+  let sql = "INSERT INTO rentals (memberID, bookID, rentalDate, dueDate, returned) VALUES ('" + userId + "', '" + bookId + "', '" + rentalDate + "', '" + dueDate + "', 'F')"
+  console.log(sql);
+  // con.query(sql, (err, result) => {
+  //   if (err) {
+  //     console.log("Error Inserting new rental");
+  //     throw err;
+  //   }
+  //   let sql2 = "UPDATE books SET available = 'F' WHERE bookID = " + bookId
+  //   con.query(sql2, (err, result) => {
+  //     if (err) {
+  //       console.log("Error Updating Book");
+  //       throw err;
+  //     }
+  //
+  //     ***********
+  //     res.send()
+  //     ***********
+  //
+  //
+  //   })
+  // })
 })
 
 app.listen(PORT, ()=> {
