@@ -51,7 +51,7 @@ app.get('/api/getBooks/:bookNumbers', (req, res) => {
     let sql = "SELECT bookTitle, authorFName, authorLName FROM `books` WHERE bookID = '" + bookNumber + "' ORDER BY bookTitle"
     con.query(sql, (err, result, fields) => {
       if (err) throw err;
-      result = JSON.stringify(result);
+      // result = JSON.stringify(result);
       console.log(result.toString());
       return result.toString();
     });
