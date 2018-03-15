@@ -61,6 +61,7 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
   let todayDate = new Date();
   let rentalDate = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
   let dueDate = new Date(todayDate + 12096e5);
+  dueDate = dueDate.getFullYear() + "-" + (dueDate.getMonth() + 1) + "-" + dueDate.getDate();
   console.log(dueDate);
 
   let sql = "INSERT INTO rentals (memberID, bookID, rentalDate, dueDate, returned) VALUES ('" + userId + "', '" + bookId + "', '" + rentalDate + "', '" + dueDate + "', 'F')"
