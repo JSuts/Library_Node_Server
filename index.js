@@ -77,7 +77,7 @@ app.get('/api/checkoutBook/:userId/:bookId', (req, res) => {
         console.log("Error Updating Book");
         throw err;
       }
-      res.send(result.affectedRows)
+      res.send(result)
     })
   })
 })
