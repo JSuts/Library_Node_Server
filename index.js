@@ -10,10 +10,25 @@
 const express = require('express');
 const app = express();
 const PORT = 8081;
-var OAuth = require('oauth').OAuth; // JAS - 1.24.18 - Grabbing the OAuth class from the OAuth module into a variable
+// var OAuth = require('oauth').OAuth; // JAS - 1.24.18 - Grabbing the OAuth class from the OAuth module into a variable
 const config = require('../config.json');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 
+var Twit = require('twit')
+
+var T = new Twit({
+  consumer_key: config.consumer_key,
+  consumer_secret: config.consumer_secret,
+  access_token: config.access_token,
+  access_token_secret:  config.access_token_secret,
+  // timeout_ms: 60*1000,  // optional HTTP request timeout to apply to all requests.
+})
+
+T.get('search/tweets',
+  { q: 'banana', count: 2 },
+  (err, data, response) => {
+  console.log(data)
+})
 
 var admin = require("firebase-admin");
 
@@ -33,27 +48,27 @@ var usrCol = db.collection('users');
 var bkCol = db.collection('books');
 
 
-var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth object from data in config file... requires 7 properties
-  config.request_token_url,
-  config.access_token_url,
-  config.consumer_key,
-  config.consumer_secret,
-  config.oauth_version,
-  config.oauth_callback,
-  config.oauth_signature
-);
+// var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth object from data in config file... requires 7 properties
+//   config.request_token_url,
+//   config.access_token_url,
+//   config.consumer_key,
+//   config.consumer_secret,
+//   config.oauth_version,
+//   config.oauth_callback,
+//   config.oauth_signature
+// );
+//
+// var twitterCredentials = {
+//   oauth_token: "",
+//   oauth_token_secret: "",
+//   access_token: "",
+//   access_token_secret: "",
+//   twitter_id: ""
+// }
 
-var twitterCredentials = {
-  oauth_token: "",
-  oauth_token_secret: "",
-  access_token: "",
-  access_token_secret: "",
-  twitter_id: ""
-}
 
 
-
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
 
 // app.use(bodyParser.urlencoded({
 //   extended: true
@@ -62,87 +77,87 @@ app.use(bodyParser.json())
 
 
 
-app.get('/api/getCredentials', (req, res) => {
-    oauth.getOAuthRequestToken((error, oauth_token, oauth_token_secret, results) => { // JAS - 1.25.18 - method of oauth that will give us a request token and request secret
-      if (error) {
-        console.log(error);
-        res.send('Authentication Failed... Error: ' + error); // JAS - 1.25.18 - giving the user a failed response
-      } else {
-        twitterCredentials.oauth_token = oauth_token;
-        twitterCredentials.oauth_token_secret = oauth_token_secret;
-        res.redirect(config.authorization_url + '?oauth_token=' + oauth_token); // JAS - 1.25.18 - redirecting the user to the authorization_url with the oauth_token
-      } // JAS - 1.26.18 - end of else no errors
-    }); // JAS - 1.25.18 - end of getOAuthRequestToken method
-  });
-
-
-  app.get('/api/request_token', (req, res) => {
-    if (!(twitterCredentials.oauth_token && twitterCredentials.oauth_token_secret && req.query.oauth_verifier)) { // JAS - 1.26.18 - checking credentials... if any ONE of those are missing, invalid request
-      // return callback('Request does not have all required keys.');
-      res.send('Request does not have all required keys.')
-    }
-    oauth.getOAuthAccessToken(twitterCredentials.oauth_token, twitterCredentials.oauth_token_secret, req.query.oauth_verifier, (errors, oauth_access_token, access_token_secret, results) => {
-      if (errors) {
-        // return callback(errors);
-        res.send(errors)
-      }
-    var url = "https://api.twitter.com/1.1/account/verify_credentials.json"; // JAS - 1.30.18 - twitter's verify_credentials url
-    oauth.get(url, oauth_access_token, access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
-      if (error) { // JAS - 1.30.18 - failure
-        console.log("Error from authenticator.authenticate: " + JSON.parse(error));
-        console.log(error);
-        res.send(error)
-        // return callback(error); // JAS - 1.30.18 - returning the error to the callback function from where it was called from
-      } else { // JAS - 1.30.18 - success
-        data = JSON.parse(data); // JAS - 1.30.18 - parsing the data returned into JSON format in the data variable
-        // console.log("JSON Data from authenticator.authenticate: "); // JAS - 1.30.18 - logging the data returned.
-        // console.log(data);
-        /* JAS - 1.30.18 - storing values in the twitterCredentials JSON variable  */
-        twitterCredentials.access_token = oauth_access_token;
-        twitterCredentials.access_token_secret = access_token_secret;
-        twitterCredentials.twitter_id = data.id_str;
-        console.log("all credentials look fine");
-        res.send(twitterCredentials)
-        // callback(false); // JAS - 1.30.18 - ends current authenticate function by calling the callback function from the index page
-      }
-    }); // JAS - 1.30.18 - end of GET verify_credentials request
-  }); // JAS - 1.30.18 - end of getOAuthAccessToken function
-}) // JAS - 1.26.18 - end of authenticate function)
-
-
-app.post('/api/getCurrentUser/:userId', (req, res) => {
-  let url = "https://api.twitter.com/1.1/users/lookup.json?id=" + req.params.userId
-  console.log("url " + url);
-  let access_token = req.body.access_token;
-  console.log("at " + req.body.access_token);
-  let oauth_access_token_secret = req.body.oauth_access_token_secret;
-  console.log("ats " + req.body.access_token_secret);
-    oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
-      if (err) {
-        console.log(err);
-        res.send(err)
-      } else {
-        console.log(data);
-        res.send(data)
-      }
-    }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
-  // oauth.post.call(oauth, "https://api.twitter.com/1.1/users/lookup.json", access_token, oauth_access_token_secret, body, callback);
-})
-
-app.get('/api/help', (req, res) => {
-  let url = "https://api.twitter.com/1.1/users/lookup.json?user_id=784241744409788416"
-  let access_token_secret = "784241744409788416-Uo1qAJTRRpLLFdjUaRXYbtfYYTgHyF2"
-  let access_token = "j6F8QsZXB0xNvGpK8UCiAXMgD3qgmTTrArVhmKCxDD1Ra";
-  oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
-    if (err) {
-      res.send(err)
-    } else {
-      console.log(data);
-      res.send(data)
-    }
-  }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
-
-})
+// app.get('/api/getCredentials', (req, res) => {
+//     oauth.getOAuthRequestToken((error, oauth_token, oauth_token_secret, results) => { // JAS - 1.25.18 - method of oauth that will give us a request token and request secret
+//       if (error) {
+//         console.log(error);
+//         res.send('Authentication Failed... Error: ' + error); // JAS - 1.25.18 - giving the user a failed response
+//       } else {
+//         twitterCredentials.oauth_token = oauth_token;
+//         twitterCredentials.oauth_token_secret = oauth_token_secret;
+//         res.redirect(config.authorization_url + '?oauth_token=' + oauth_token); // JAS - 1.25.18 - redirecting the user to the authorization_url with the oauth_token
+//       } // JAS - 1.26.18 - end of else no errors
+//     }); // JAS - 1.25.18 - end of getOAuthRequestToken method
+//   });
+//
+//
+//   app.get('/api/request_token', (req, res) => {
+//     if (!(twitterCredentials.oauth_token && twitterCredentials.oauth_token_secret && req.query.oauth_verifier)) { // JAS - 1.26.18 - checking credentials... if any ONE of those are missing, invalid request
+//       // return callback('Request does not have all required keys.');
+//       res.send('Request does not have all required keys.')
+//     }
+//     oauth.getOAuthAccessToken(twitterCredentials.oauth_token, twitterCredentials.oauth_token_secret, req.query.oauth_verifier, (errors, oauth_access_token, access_token_secret, results) => {
+//       if (errors) {
+//         // return callback(errors);
+//         res.send(errors)
+//       }
+//     var url = "https://api.twitter.com/1.1/account/verify_credentials.json"; // JAS - 1.30.18 - twitter's verify_credentials url
+//     oauth.get(url, oauth_access_token, access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
+//       if (error) { // JAS - 1.30.18 - failure
+//         console.log("Error from authenticator.authenticate: " + JSON.parse(error));
+//         console.log(error);
+//         res.send(error)
+//         // return callback(error); // JAS - 1.30.18 - returning the error to the callback function from where it was called from
+//       } else { // JAS - 1.30.18 - success
+//         data = JSON.parse(data); // JAS - 1.30.18 - parsing the data returned into JSON format in the data variable
+//         // console.log("JSON Data from authenticator.authenticate: "); // JAS - 1.30.18 - logging the data returned.
+//         // console.log(data);
+//         /* JAS - 1.30.18 - storing values in the twitterCredentials JSON variable  */
+//         twitterCredentials.access_token = oauth_access_token;
+//         twitterCredentials.access_token_secret = access_token_secret;
+//         twitterCredentials.twitter_id = data.id_str;
+//         console.log("all credentials look fine");
+//         res.send(twitterCredentials)
+//         // callback(false); // JAS - 1.30.18 - ends current authenticate function by calling the callback function from the index page
+//       }
+//     }); // JAS - 1.30.18 - end of GET verify_credentials request
+//   }); // JAS - 1.30.18 - end of getOAuthAccessToken function
+// }) // JAS - 1.26.18 - end of authenticate function)
+//
+//
+// app.post('/api/getCurrentUser/:userId', (req, res) => {
+//   let url = "https://api.twitter.com/1.1/users/lookup.json?id=" + req.params.userId
+//   console.log("url " + url);
+//   let access_token = req.body.access_token;
+//   console.log("at " + req.body.access_token);
+//   let oauth_access_token_secret = req.body.oauth_access_token_secret;
+//   console.log("ats " + req.body.access_token_secret);
+//     oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
+//       if (err) {
+//         console.log(err);
+//         res.send(err)
+//       } else {
+//         console.log(data);
+//         res.send(data)
+//       }
+//     }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
+//   // oauth.post.call(oauth, "https://api.twitter.com/1.1/users/lookup.json", access_token, oauth_access_token_secret, body, callback);
+// })
+//
+// app.get('/api/help', (req, res) => {
+//   let url = "https://api.twitter.com/1.1/users/lookup.json?user_id=784241744409788416"
+//   let access_token_secret = "784241744409788416-Uo1qAJTRRpLLFdjUaRXYbtfYYTgHyF2"
+//   let access_token = "j6F8QsZXB0xNvGpK8UCiAXMgD3qgmTTrArVhmKCxDD1Ra";
+//   oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
+//     if (err) {
+//       res.send(err)
+//     } else {
+//       console.log(data);
+//       res.send(data)
+//     }
+//   }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
+//
+// })
 
 
 
