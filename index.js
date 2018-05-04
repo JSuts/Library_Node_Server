@@ -110,8 +110,11 @@ app.get('/api/getCredentials', (req, res) => {
 
 app.post('/api/getCurrentUser/:userId', (req, res) => {
   let url = "https://api.twitter.com/1.1/users/lookup.json?id=" + req.params.userId
+  console.log("url " + url);
   let access_token = req.body.access_token;
+  console.log("at " + req.body.access_token);
   let oauth_access_token_secret = req.body.oauth_access_token_secret;
+  console.log("ats " + req.body.access_token_secret);
   // let body = {
   //   req.params.userId
   // }
