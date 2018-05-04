@@ -46,7 +46,7 @@ var bkCol = db.collection('books');
 
 app.get('/api/connect', (req, res) => {
   T.get('search/tweets',
-  { q: 'Lebron James', count: 5 },
+  { q: '#LebronJames', count: 5 },
   (err, data, response) => {
     res.send(data)
   })
