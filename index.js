@@ -56,6 +56,11 @@ app.get('/api/getCredentials', (req, res) => {
   })
 })
 
+app.get('api/request_token', (req, res) => {
+  console.log(req);
+  res.send(req)
+})
+
 
 
 
