@@ -383,6 +383,4 @@ clearInterval(calcDatesInterval)
 
 app.listen(PORT, ()=> {
   console.log('Server listening on port:' + PORT);
-  console.log("OAuth callback hostname: " + url.parse(config.oauth_callback).hostname); // JAS - 1.23.18 - debug code to identify the oauth_callback's hostname
-  console.log("OAuth callback path: " + url.parse(config.oauth_callback).path); // JAS - 1.23.18 - debug code to identify the oauth_callback's path name
 })
