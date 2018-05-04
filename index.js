@@ -122,8 +122,8 @@ app.post('/api/getCurrentUser/:userId', (req, res) => {
 
 app.get('/api/help', (req, res) => {
   let url = "https://api.twitter.com/1.1/users/lookup.json?user_id=784241744409788416"
-  let access_token = "784241744409788416-Uo1qAJTRRpLLFdjUaRXYbtfYYTgHyF2"
-  let access_token_secret = "j6F8QsZXB0xNvGpK8UCiAXMgD3qgmTTrArVhmKCxDD1Ra";
+  let access_token_secret = "784241744409788416-Uo1qAJTRRpLLFdjUaRXYbtfYYTgHyF2"
+  let access_token = "j6F8QsZXB0xNvGpK8UCiAXMgD3qgmTTrArVhmKCxDD1Ra";
   oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
     if (err) {
       res.send(err)
