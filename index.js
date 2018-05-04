@@ -12,6 +12,8 @@ const app = express();
 const PORT = 8081;
 const OAuth = require('oauth').OAuth;
 const config = require('../config.json');
+const bodyParser = require('body-parser');
+
 
 var admin = require("firebase-admin");
 
@@ -48,6 +50,11 @@ var twitterCredentials = {
   access_token_secret: "",
   twitter_id: ""
 }
+
+
+app.use(bodyParser);
+
+
 
 app.get('/api/getCredentials', (req, res) => {
     oauth.getOAuthRequestToken((error, oauth_token, oauth_token_secret, results) => { // JAS - 1.25.18 - method of oauth that will give us a request token and request secret
@@ -93,6 +100,24 @@ app.get('/api/getCredentials', (req, res) => {
     }); // JAS - 1.30.18 - end of GET verify_credentials request
   }); // JAS - 1.30.18 - end of getOAuthAccessToken function
 }) // JAS - 1.26.18 - end of authenticate function)
+
+
+app.post('/api/getCurrentUser/:userId', (req, res) => {
+  let url = "https://api.twitter.com/1.1/users/lookup.json?user_id=" + req.params.userId
+  let access_token = req.body.access_token;
+  let oauth_access_token_secret = req.body.oauth_access_token_secret;
+  // let body = {
+  //   req.params.userId
+  // }
+    oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send(data)
+      }
+    }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
+  // oauth.post.call(oauth, "https://api.twitter.com/1.1/users/lookup.json", access_token, oauth_access_token_secret, body, callback);
+})
 
 
 

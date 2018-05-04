@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JSutter449/Library_Node_Server#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "firebase-admin": "^5.12.0",
     "mysql": "^2.15.0",
