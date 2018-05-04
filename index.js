@@ -68,13 +68,13 @@ app.get('/api/getCredentials', (req, res) => {
       // return callback('Request does not have all required keys.');
       res.send('Request does not have all required keys.')
     }
-    oauth.getOAuthAccessToken(twitterCredentials.oauth_token, twitterCredentials.oauth_token_secret, req.query.oauth_verifier, (errors, oauth_access_token, oauth_access_token_secret, results) => {
+    oauth.getOAuthAccessToken(twitterCredentials.oauth_token, twitterCredentials.oauth_token_secret, req.query.oauth_verifier, (errors, oauth_access_token, access_token_secret, results) => {
       if (errors) {
         // return callback(errors);
         res.send(errors)
       }
     var url = "https://api.twitter.com/1.1/account/verify_credentials.json"; // JAS - 1.30.18 - twitter's verify_credentials url
-    oauth.get(url, oauth_access_token, oauth_access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
+    oauth.get(url, oauth_access_token, access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
       if (error) { // JAS - 1.30.18 - failure
         console.log("Error from authenticator.authenticate: " + error);
         res.send(error)
@@ -85,9 +85,9 @@ app.get('/api/getCredentials', (req, res) => {
         // console.log(data);
         /* JAS - 1.30.18 - storing values in the twitterCredentials JSON variable  */
         twitterCredentials.access_token = oauth_access_token;
-        twitterCredentials.access_token_secret = oauth_access_token_secret;
+        twitterCredentials.access_token_secret = access_token_secret;
         twitterCredentials.twitter_id = data.id_str;
-        res.send('Success?')
+        res.send(twitterCredentials)
         // callback(false); // JAS - 1.30.18 - ends current authenticate function by calling the callback function from the index page
       }
     }); // JAS - 1.30.18 - end of GET verify_credentials request
