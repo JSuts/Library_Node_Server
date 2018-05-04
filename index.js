@@ -52,7 +52,9 @@ var twitterCredentials = {
 }
 
 
-app.use(bodyParser);
+app.use(bodyParser.urlencoded());
+
+app.use(bodyParser.json());
 
 
 
