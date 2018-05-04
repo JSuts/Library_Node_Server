@@ -10,32 +10,34 @@
 const express = require('express');
 const app = express();
 const PORT = 8081;
-const mysql = require('mysql');
 
+var admin = require("firebase-admin");
 
+var serviceAccount = require("../ogilvie-library-firebase-adminsdk-n7no1-0054e6cc40.json");
 
-var con = mysql.createConnection({
-  host: "localhost",
-  localAddress: "138.68.16.176",
-  socketPath: "/var/run/mysqld/mysqld.sock",
-  user: "mobileUser",
-  password: process.env.mysqlPW,
-  database: "libraryManager"
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://ogilvie-library.firebaseio.com"
 });
 
-con.connect(function(err) {
-  if (err) {
-    console.log("Couldn't connect to databse... Error: ");
-    throw err
-  }
-  console.log("Connected!");
-});
+var db = admin.firestore();
+
+// Database Collection References
+var arCol = db.collection('activeRentals');
+var prCol = db.collection('previousRentals');
+var usrCol = db.collection('users');
+var bkCol = db.collection('books');
+
+
+
+
 
 app.get('/api/start', (req, res) => {
   console.log("Request called");
   res.send("Hello");
 });
 
+//
 app.get('/api/getBooks', (req, res) => {
   var sql = "SELECT * FROM `books` ORDER BY bookTitle"
   con.query(sql, (err, result, fields) => {
@@ -143,6 +145,99 @@ app.get('/api/userInformation/:userId', (req, res) => {
 
   })
 })
+
+
+
+function queryRentals() {
+clearInterval(calcDatesInterval)
+  arCol.get()
+  .then((snapshot) => {
+    console.log("New Data");
+    function calculateDueDates() {
+      console.log("Testing");
+      var curTime = new Date();
+      snapshot.forEach((doc) => {
+        let bookRef = doc.data().bookId;
+        let userRef = doc.data().userId;
+        let dueDate = doc.data().dueDate;
+        let dif = (dueDate - curTime)
+        dueDate = dueDate.toString()
+        dueDate = dueDate.substring(0, dueDate.lastIndexOf(":"));
+
+        if (dif < (-2500)) {
+          return;
+        }
+        console.log(dif);
+
+        // if book is due within one week
+        if (dif <= (week + 2500) && dif >= (week - 2500)) {
+          console.log("NOTIFICATION: 1 WEEK");
+
+          getUserInformation(userRef, bookRef)
+          .then((response) => {
+            let body = "Your book, " + response.bookTitle + ", is due in one week on " + dueDate
+
+            sendNotification(response.token, body);
+          })
+          .catch((response) => {
+            console.log(response);
+          })
+        }
+
+        // if book is due within one day
+        if (dif <= (day + 2500) && dif >= (day - 2500)) {
+          console.log("NOTIFICATION: 1 DAY");
+          getUserInformation(userRef, bookRef)
+          .then((response) => {
+            let body = "Your book, " + response.bookTitle + ", is due in one day on " + dueDate
+
+            sendNotification(response.token, body);
+          })
+          .catch((response) => {
+            console.log(response);
+          })
+        }
+
+        // if book is due within one hour
+        if (dif <= (hour + 2500) && dif >= (hour - 2500)) {
+          console.log("NOTIFICATION: 1 HOUR");
+          getUserInformation(userRef, bookRef)
+          .then((response) => {
+            let body = "Your book, " + response.bookTitle + ", is due in one hour on " + dueDate
+
+            sendNotification(response.token, body);
+          })
+          .catch((response) => {
+            console.log(response);
+          })
+        }
+
+        //if  book is due right now
+        if (dif <= 2500 && dif >= (-2500)) {
+          console.log("NOTIFICATION: DUE NOW");
+          getUserInformation(userRef, bookRef)
+          .then((response) => {
+            let body = "Your book, " + response.bookTitle + ", is due right now. Please return it."
+
+            sendNotification(response.token, body);
+          })
+          .catch((response) => {
+            console.log(response);
+          })
+        }
+
+      }) // end of forEach
+    } // end of calculateDueDates function
+    calcDatesInterval = setInterval(calculateDueDates, 5000);
+    calculateDueDates(); // to execute the query wihout initial delay
+  })
+  // TODO: change to 24 hours
+  setTimeout(queryRentals, 15000); // timeout for 20 seconds
+}
+// queryRentals(); // to execute the query without initial delay
+
+
+
 
 app.listen(PORT, ()=> {
   console.log('Server listening on port:' + PORT);
