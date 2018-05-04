@@ -117,6 +117,7 @@ app.post('/api/getCurrentUser/:userId', (req, res) => {
   // }
     oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
       if (err) {
+        console.log(err);
         res.send(err)
       } else {
         console.log(data);
