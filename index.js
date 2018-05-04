@@ -10,7 +10,7 @@
 const express = require('express');
 const app = express();
 const PORT = 8081;
-const OAuth = require('oauth');
+const OAuth = require('oauth').OAuth;
 const config = require('../config.json');
 
 var admin = require("firebase-admin");
