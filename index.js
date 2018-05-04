@@ -10,6 +10,8 @@
 const express = require('express');
 const app = express();
 const PORT = 8081;
+const OAuth = require('oauth');
+const config = require('../config.json');
 
 var admin = require("firebase-admin");
 
@@ -27,6 +29,35 @@ var arCol = db.collection('activeRentals');
 var prCol = db.collection('previousRentals');
 var usrCol = db.collection('users');
 var bkCol = db.collection('books');
+
+
+var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth object from data in config file... requires 7 properties
+  config.request_token_url,
+  config.access_token_url,
+  config.consumer_key,
+  config.consumer_secret,
+  config.oauth_version,
+  config.oauth_callback,
+  config.oauth_signature
+);
+
+app.get('/api/getCredentials'(req, res) => {
+  oauth.getOAuthRequestToken((err, oauth_token, oauth_token_secret, results) => {
+    if (err) {
+      console.log(err);
+      res.send('Authentication failed');
+    } else {
+      res.send({
+        oauth_token: oauth_token,
+        oauth_token_secret: oauth_token_secret,
+        redirectTo: config.authorization_url + '?oauth_token=' + oauth_token
+      })
+    }
+  })
+})
+
+
+
 
 
 
