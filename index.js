@@ -41,25 +41,81 @@ var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth
   config.oauth_signature
 );
 
-app.get('/api/getCredentials', (req, res) => {
-  oauth.getOAuthRequestToken((err, oauth_token, oauth_token_secret, results) => {
-    if (err) {
-      console.log(err);
-      res.send('Authentication failed');
-    } else {
-      res.send({
-        oauth_token: oauth_token,
-        oauth_token_secret: oauth_token_secret,
-        redirectTo: config.authorization_url + '?oauth_token=' + oauth_token
-      })
-    }
-  })
-})
+var twitterCredentials = {
+  oauth_token: "",
+  oauth_token_secret: "",
+  access_token: "",
+  access_token_secret: "",
+  twitter_id: ""
+}
 
-app.get('/api/request_token', (req, res) => {
-  // console.log(req);
-  res.send("Yes hello")
-})
+app.get('/api/getCredentials', (req, res) => {
+    oauth.getOAuthRequestToken((error, oauth_token, oauth_token_secret, results) => { // JAS - 1.25.18 - method of oauth that will give us a request token and request secret
+      if (error) {
+        console.log(error);
+        res.send('Authentication Failed... Error: ' + error); // JAS - 1.25.18 - giving the user a failed response
+      } else {
+        twitterCredentials.oauth_token = oauth_token;
+        twitterCredentials.oauth_token_secret = oauth_token_secret;
+        res.redirect(config.authorization_url + '?oauth_token=' + oauth_token); // JAS - 1.25.18 - redirecting the user to the authorization_url with the oauth_token
+      } // JAS - 1.26.18 - end of else no errors
+    }); // JAS - 1.25.18 - end of getOAuthRequestToken method
+  });
+
+
+  app.get('/api/request_token', (req, res) => {
+    if (!(twitterCredentials.oauth_token && twitterCredentials.oauth_token_secret && req.query.oauth_verifier)) { // JAS - 1.26.18 - checking credentials... if any ONE of those are missing, invalid request
+      // return callback('Request does not have all required keys.');
+      res.send('Request does not have all required keys.')
+    }
+    oauth.getOAuthAccessToken(twitterCredentials.oauth_token, twitterCredentials.oauth_token_secret, req.query.oauth_verifier, (errors, oauth_access_token, oauth_access_token_secret, results) => {
+      if (errors) {
+        // return callback(errors);
+        res.send(errors)
+      }
+    var url = "https://api.twitter.com/1.1/account/verify_credentials.json"; // JAS - 1.30.18 - twitter's verify_credentials url
+    oauth.get(url, oauth_access_token, oauth_access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
+      if (error) { // JAS - 1.30.18 - failure
+        console.log("Error from authenticator.authenticate: " + error);
+        res.send(error)
+        // return callback(error); // JAS - 1.30.18 - returning the error to the callback function from where it was called from
+      } else { // JAS - 1.30.18 - success
+        data = JSON.parse(data); // JAS - 1.30.18 - parsing the data returned into JSON format in the data variable
+        // console.log("JSON Data from authenticator.authenticate: "); // JAS - 1.30.18 - logging the data returned.
+        // console.log(data);
+        /* JAS - 1.30.18 - storing values in the twitterCredentials JSON variable  */
+        twitterCredentials.access_token = oauth_access_token;
+        twitterCredentials.access_token_secret = oauth_access_token_secret;
+        twitterCredentials.twitter_id = data.id_str;
+        res.send('Success?')
+        // callback(false); // JAS - 1.30.18 - ends current authenticate function by calling the callback function from the index page
+      }
+    }); // JAS - 1.30.18 - end of GET verify_credentials request
+  }); // JAS - 1.30.18 - end of getOAuthAccessToken function
+  } // JAS - 1.26.18 - end of authenticate function)
+
+
+
+
+// app.get('/api/getCredentials', (req, res) => {
+//   oauth.getOAuthRequestToken((err, oauth_token, oauth_token_secret, results) => {
+//     if (err) {
+//       console.log(err);
+//       res.send('Authentication failed');
+//     } else {
+//       res.send({
+//         oauth_token: oauth_token,
+//         oauth_token_secret: oauth_token_secret,
+//         redirectTo: config.authorization_url + '?oauth_token=' + oauth_token
+//       })
+//     }
+//   })
+// })
+//
+// app.get('/api/request_token', (req, res) => {
+//   // console.log(req);
+//   res.send("Yes hello")
+// })
 
 
 
