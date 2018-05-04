@@ -308,6 +308,12 @@ app.get('/api/start', (req, res) => {
 //   })
 // })
 
+app.get('/api/notifyMe/:userId', (req, res) => {
+  console.log("Request recieved");
+  console.log("doing things");
+  console.log("Notifcation sent");
+  res.sendStatus(200)
+})
 
 
 function queryRentals() {
