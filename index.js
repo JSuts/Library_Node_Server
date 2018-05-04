@@ -10,7 +10,7 @@
 const express = require('express');
 const app = express();
 const PORT = 8081;
-var OAuth = require('OAuth').OAuth; // JAS - 1.24.18 - Grabbing the OAuth class from the OAuth module into a variable
+var OAuth = require('oauth').OAuth; // JAS - 1.24.18 - Grabbing the OAuth class from the OAuth module into a variable
 const config = require('../config.json');
 const bodyParser = require('body-parser');
 
