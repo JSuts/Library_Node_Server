@@ -41,7 +41,7 @@ var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth
   config.oauth_signature
 );
 
-app.get('/api/getCredentials'(req, res) => {
+app.get('/api/getCredentials', (req, res) => {
   oauth.getOAuthRequestToken((err, oauth_token, oauth_token_secret, results) => {
     if (err) {
       console.log(err);
