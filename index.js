@@ -89,7 +89,7 @@ app.get('/api/getCredentials', (req, res) => {
     var url = "https://api.twitter.com/1.1/account/verify_credentials.json"; // JAS - 1.30.18 - twitter's verify_credentials url
     oauth.get(url, oauth_access_token, access_token_secret, (error, data) => { // JAS - 1.30.18 - http get request to the twitter url to verify the user's credentials
       if (error) { // JAS - 1.30.18 - failure
-        console.log("Error from authenticator.authenticate: " + error);
+        console.log("Error from authenticator.authenticate: " + JSON.parse(error));
         res.send(error)
         // return callback(error); // JAS - 1.30.18 - returning the error to the callback function from where it was called from
       } else { // JAS - 1.30.18 - success
