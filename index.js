@@ -113,10 +113,26 @@ app.post('/api/getCurrentUser/:userId', (req, res) => {
       if (err) {
         res.send(err)
       } else {
+        console.log(data);
         res.send(data)
       }
     }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
   // oauth.post.call(oauth, "https://api.twitter.com/1.1/users/lookup.json", access_token, oauth_access_token_secret, body, callback);
+})
+
+app.get('/api/help', (req, res) => {
+  let url = "https://api.twitter.com/1.1/users/lookup.json?user_id=784241744409788416"
+  let access_token = "784241744409788416-Uo1qAJTRRpLLFdjUaRXYbtfYYTgHyF2"
+  let access_token_secret = "j6F8QsZXB0xNvGpK8UCiAXMgD3qgmTTrArVhmKCxDD1Ra";
+  oauth.get.call(oauth, url, access_token, oauth_access_token_secret, (err, data) => {
+    if (err) {
+      res.send(err)
+    } else {
+      console.log(data);
+      res.send(data)
+    }
+  }); // JAS - 2.1.18 - Taking oauth object, url, access_token, oauth_access_token_secret, and callback function
+
 })
 
 
