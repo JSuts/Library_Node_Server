@@ -24,11 +24,7 @@ var T = new Twit({
   // timeout_ms: 60*1000,  // optional HTTP request timeout to apply to all requests.
 })
 
-T.get('search/tweets',
-  { q: 'banana', count: 2 },
-  (err, data, response) => {
-  console.log(data)
-})
+
 
 var admin = require("firebase-admin");
 
@@ -46,6 +42,15 @@ var arCol = db.collection('activeRentals');
 var prCol = db.collection('previousRentals');
 var usrCol = db.collection('users');
 var bkCol = db.collection('books');
+
+
+app.get('/api/connect', (req, res) => {
+  T.get('search/tweets',
+  { q: 'Lebron James', count: 5 },
+  (err, data, response) => {
+    res.send(data)
+  })
+})
 
 
 // var oauth = new OAuth( // JAS - 1.24.18 - constructor function to build an OAuth object from data in config file... requires 7 properties
