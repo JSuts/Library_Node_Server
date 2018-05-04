@@ -101,6 +101,7 @@ app.get('/api/getCredentials', (req, res) => {
         twitterCredentials.access_token = oauth_access_token;
         twitterCredentials.access_token_secret = access_token_secret;
         twitterCredentials.twitter_id = data.id_str;
+        console.log("all credentials look fine");
         res.send(twitterCredentials)
         // callback(false); // JAS - 1.30.18 - ends current authenticate function by calling the callback function from the index page
       }
