@@ -92,7 +92,7 @@ app.get('/api/getCredentials', (req, res) => {
       }
     }); // JAS - 1.30.18 - end of GET verify_credentials request
   }); // JAS - 1.30.18 - end of getOAuthAccessToken function
-  } // JAS - 1.26.18 - end of authenticate function)
+}) // JAS - 1.26.18 - end of authenticate function)
 
 
 
