@@ -311,7 +311,17 @@ app.get('/api/start', (req, res) => {
 app.get('/api/notifyMe/:userId', (req, res) => {
   console.log("Request recieved");
   console.log("doing things");
+
   console.log(req.params.userId);
+
+  usrCol.doc(req.params.userId).get()
+  .then((doc) => {
+    console.log(doc.data());
+  })
+
+  // let body = "Your book, " + response.bookTitle + ", is due in one hour on " + dueDate
+  // sendNotification(, body);
+
   console.log("Notifcation sent");
   res.sendStatus(200)
 })
@@ -403,7 +413,7 @@ clearInterval(calcDatesInterval)
   // TODO: change to 24 hours
   setTimeout(queryRentals, 15000); // timeout for 20 seconds
 }
-// queryRentals(); // to execute the query without initial delay
+queryRentals(); // to execute the query without initial delay
 
 
 
