@@ -326,6 +326,7 @@ app.get('/api/notifyMe/:userId', (req, res) => {
   res.sendStatus(200)
 })
 
+var calcDatesInterval;
 
 function queryRentals() {
 clearInterval(calcDatesInterval)
@@ -407,7 +408,7 @@ clearInterval(calcDatesInterval)
 
       }) // end of forEach
     } // end of calculateDueDates function
-    var calcDatesInterval = setInterval(calculateDueDates, 5000);
+    calcDatesInterval = setInterval(calculateDueDates, 5000);
     calculateDueDates(); // to execute the query wihout initial delay
   })
   // TODO: change to 24 hours
