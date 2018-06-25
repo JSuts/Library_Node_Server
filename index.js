@@ -339,7 +339,7 @@ app.get('/api/notifyMe/:userId', (req, res) => {
 
   usrCol.doc(req.params.userId).get()
   .then((doc) => {
-    sendNotification(userToken, "Book is due soon.")
+    sendNotification(doc.data().fcmToken, "Book is due soon.")
     .catch((err) => {
       console.log(err);
     })
@@ -368,9 +368,7 @@ function queryRentals() {
 clearInterval(calcDatesInterval)
   arCol.get()
   .then((snapshot) => {
-    console.log("New Data");
     function calculateDueDates() {
-      console.log("Testing");
       var curTime = new Date();
       snapshot.forEach((doc) => {
         let bookRef = doc.data().bookId;
@@ -383,7 +381,6 @@ clearInterval(calcDatesInterval)
         if (dif < (-2500)) {
           return;
         }
-        console.log(dif);
 
         // if book is due within one week
         if (dif <= (week + 2500) && dif >= (week - 2500)) {
