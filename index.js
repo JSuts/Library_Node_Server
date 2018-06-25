@@ -332,20 +332,12 @@ function sendNotification(token, body) {
 
 
 app.get('/api/notifyMe/:userId', (req, res) => {
-  console.log("Request recieved");
-  console.log("doing things");
-
-  console.log(req.params.userId);
-
+  var dueDate = new Date(Date.now() + 1209600000);
+  var dueDateString = dueDate.toString()
   usrCol.doc(req.params.userId).get()
   .then((doc) => {
-    sendNotification(doc.data().fcmToken, "Book is due soon.");
+    sendNotification(doc.data().fcmToken, "Your book is due back in two weeks on " + dueDateString.substring(0, dueDateString.lastIndexOf(":")) + ".");
   })
-
-  // let body = "Your book, " + response.bookTitle + ", is due in one hour on " + dueDate
-  // sendNotification(, body);
-
-  console.log("Notifcation sent");
   res.sendStatus(200)
 })
 
