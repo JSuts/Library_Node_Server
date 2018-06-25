@@ -407,7 +407,7 @@ clearInterval(calcDatesInterval)
 
       }) // end of forEach
     } // end of calculateDueDates function
-    calcDatesInterval = setInterval(calculateDueDates, 5000);
+    var calcDatesInterval = setInterval(calculateDueDates, 5000);
     calculateDueDates(); // to execute the query wihout initial delay
   })
   // TODO: change to 24 hours
