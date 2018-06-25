@@ -308,6 +308,29 @@ app.get('/api/start', (req, res) => {
 //   })
 // })
 
+
+
+// NOTE: Sends notifications to device
+function sendNotification(token, body) {
+
+    // TODO: TEST FOR SOUND OR VIBRATION
+      message = {
+        notification: {
+          body: body
+        },
+        token: token
+      }
+
+    admin.messaging().send(message)
+    .then((response) => {
+      console.log("Successfully sent message:", response);
+    })
+    .catch((error) => {
+      console.log('Error sending message: ', error);
+    })
+} // end of sendNotification()
+
+
 app.get('/api/notifyMe/:userId', (req, res) => {
   console.log("Request recieved");
   console.log("doing things");
@@ -316,8 +339,6 @@ app.get('/api/notifyMe/:userId', (req, res) => {
 
   usrCol.doc(req.params.userId).get()
   .then((doc) => {
-    var userToken = doc.data().fcmToken;
-    console.log(userToken);
     sendNotification(userToken, "Book is due soon.")
     .catch((err) => {
       console.log(err);
@@ -331,7 +352,17 @@ app.get('/api/notifyMe/:userId', (req, res) => {
   res.sendStatus(200)
 })
 
-var calcDatesInterval;
+
+
+
+
+/* time in milliseconds variables */
+var week = 604800000 // (1000 * 60 * 60 * 24 * 7)
+var day = 86400000 // (1000 * 60 * 60 * 24)
+var hour = 3600000 // (1000 * 60 * 60)
+
+var calcDatesInterval; // variable set to control the execution of calculateDueDates()
+
 
 function queryRentals() {
 clearInterval(calcDatesInterval)
@@ -419,7 +450,7 @@ clearInterval(calcDatesInterval)
   // TODO: change to 24 hours
   setTimeout(queryRentals, 15000); // timeout for 20 seconds
 }
-// queryRentals(); // to execute the query without initial delay
+queryRentals(); // to execute the query without initial delay
 
 
 
