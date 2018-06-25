@@ -339,10 +339,7 @@ app.get('/api/notifyMe/:userId', (req, res) => {
 
   usrCol.doc(req.params.userId).get()
   .then((doc) => {
-    sendNotification(doc.data().fcmToken, "Book is due soon.")
-    .catch((err) => {
-      console.log(err);
-    })
+    sendNotification(doc.data().fcmToken, "Book is due soon.");
   })
 
   // let body = "Your book, " + response.bookTitle + ", is due in one hour on " + dueDate
