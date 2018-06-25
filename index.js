@@ -414,7 +414,7 @@ clearInterval(calcDatesInterval)
   // TODO: change to 24 hours
   setTimeout(queryRentals, 15000); // timeout for 20 seconds
 }
-queryRentals(); // to execute the query without initial delay
+// queryRentals(); // to execute the query without initial delay
 
 
 
